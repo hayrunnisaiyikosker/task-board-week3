@@ -1,3 +1,5 @@
+import { fetchTodo } from "./api.ts";
+import { ExternalTodoSchema } from "./schemas.ts";
 import { createTask } from "./createTask.ts";
 
 const formPayloads: unknown[] = [
@@ -22,3 +24,18 @@ for (const payload of formPayloads) {
     console.log("refused:", result.error);
   }
 }
+
+console.log("— outside feed —");
+const raw: unknown = await fetchTodo(1);
+const parsed = ExternalTodoSchema.safeParse(raw);
+if (!parsed.success) {
+  console.log("feed refused");
+} else {
+  const imported = createTask({
+    title: parsed.data.title,
+    status: parsed.data.completed ? "done" : "open",
+    projectId: 1,
+  });
+  console.log("imported:", imported);
+}
+console.log("missing todo:", await fetchTodo(99999));
