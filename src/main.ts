@@ -1,5 +1,5 @@
 import { fetchTodo } from "./api.ts";
-import { ExternalTodoSchema } from "./schemas.ts";
+import { CreateTaskSchema, CreateTaskFromQuerySchema, ExternalTodoSchema } from "./schemas.ts";
 import { createTask } from "./createTask.ts";
 
 const formPayloads: unknown[] = [
@@ -39,3 +39,23 @@ if (!parsed.success) {
   console.log("imported:", imported);
 }
 console.log("missing todo:", await fetchTodo(99999));
+
+console.log("— challenge: field errors —");
+const emptyTitleResult = CreateTaskSchema.safeParse({
+  title: "",
+  status: "open",
+  projectId: 1,
+});
+if (!emptyTitleResult.success) {
+  console.log(emptyTitleResult.error.flatten().fieldErrors);
+}
+
+console.log("— stretch: strict —");
+console.log(
+  createTask({ title: "Extra field", status: "open", projectId: 1, completed: false }),
+);
+
+console.log("— challenge: query string —");
+const query = { status: "open", projectId: "2", title: "From the URL" };
+console.log("normal schema:", CreateTaskSchema.safeParse(query).success);
+console.log("coerce schema:", CreateTaskFromQuerySchema.safeParse(query));

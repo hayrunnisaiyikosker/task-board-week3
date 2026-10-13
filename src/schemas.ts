@@ -5,14 +5,17 @@ export const CreateTaskSchema = z.object({
   status: z.enum(["open", "doing", "done"]),
   projectId: z.number(),
   dueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
-});
+}).strict();
 
 export type CreateTask = z.infer<typeof CreateTaskSchema>;
 
-// Activity 4. Describe the JSON that jsonplaceholder actually returns.
 export const ExternalTodoSchema = z.object({
   userId: z.number(),
   id: z.number(),
   title: z.string(),
   completed: z.boolean(),
+});
+
+export const CreateTaskFromQuerySchema = CreateTaskSchema.extend({
+  projectId: z.coerce.number(),
 });

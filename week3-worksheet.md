@@ -1,7 +1,7 @@
 # Week 3 Lab Worksheet
 Name: Hayrunnisa IYIKOSKER
 Program: Software Engineering 
-Level I aimed for today: Core / Stretch / Challenge
+Level I aimed for today: Core + Stretch + Challenge
 
 ## Before you run the lie
 What do you expect `live done` to print, and why?
@@ -26,6 +26,18 @@ What printed for the dead address (the network error)?
   Network Error: [TypeError: fetch failed] it went into catch.
 Which of those two did `fetch` throw for?
   Only the dead adress (network failure). For 404 , the fetch did not throw, it returned a response with ok = false.
+
+Which line appeared first? 
+  "starting fetch..." appeared first, then "this line runs before the server answers".
+What does it show about await? 
+  The function runs normally until it reaches the first await. At that point it waits for the server, so the lines before await run immediately.
+
+An async function returns a promise immediately. The caller still has to await it, and if they forget, they get a Promise object instead of the real value, and the code continues before the data has arrived.
+
+## Activity 2
+  dueDate must match YYYY-MM-DD, so "tomorrow" is refused. A payload with no dueDate is still saved.
+
+  The object names the `title` field. It shows which form field has the error, so the form can show the message next to that field.
 
 ## Activity 3 — Outside feed
 Paste the form boundary output (saved / refused lines).
@@ -53,7 +65,14 @@ Paste the outside-feed output.
     missing todo: null
 In one sentence: why was the raw to-do refused by `createTask` even though it has a title?
   Because the raw to-do has `completed` instead of `status`, and it has no `projectId`.
-Having a title is not enough actually, createTask needs all the fields of CreateTaskSchema.
+  Having a title is not enough actually, createTask needs all the fields of CreateTaskSchema.
+
+## Activity 3 — Stretch (.strict)
+With .strict(), the payload with the extra field `completed: false` was refused:
+  "Unrecognized key(s) in object: 'completed'". npm run check still passed with .strict(), so I kept it. The extra field mattered because without .strict() Zod silently drops unknown fields, so a wrong shape could pass without anyone noticing.
+
+## Activity 3 — Challenge (coerce)
+The normal schema refuses projectId "2" because it is a string, not a number. The coerce schema turns "2" into 2. coerce is a decision I write down because it converts many wrong values silently (for example "" becomes 0). I should use it only where I know the data is always text, like a query string, not for every number.
 
 ## Exit question
 Where is the boundary in this program, and what do you trust after the data has crossed it?
